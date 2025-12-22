@@ -2,143 +2,165 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>ptb-lab</title>
+    <title>ptb-lab | 用户中心</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            background: #eef1f4;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
-                         Roboto, "Helvetica Neue", Arial, sans-serif;
-            color: #333;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f6f8;
         }
-
-        .header {
-            background: #1f2933;
-            color: #fff;
-            padding: 18px 0;
-            text-align: center;
-            font-size: 18px;
-            letter-spacing: 1px;
-        }
-
-        .panel {
-            width: 480px;
+        .container {
+            width: 460px;
             margin: 80px auto;
             background: #fff;
-            border-radius: 6px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-            overflow: hidden;
-        }
-
-        .panel-body {
             padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(0,0,0,0.1);
         }
-
-        .panel-body h3 {
-            margin-top: 0;
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 20px;
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
         }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 2px solid #ddd;
+            object-fit: cover;
             display: block;
+            margin: 0 auto 8px;
+        }
+        .field {
+            margin-bottom: 15px;
+        }
+        .field label {
             font-size: 13px;
             color: #555;
-            margin-bottom: 6px;
+            display: block;
+            margin-bottom: 5px;
         }
-
-        .form-group input {
+        .field input {
             width: 100%;
-            padding: 10px;
-            font-size: 14px;
+            padding: 9px;
             border: 1px solid #ccd2d8;
             border-radius: 4px;
-            outline: none;
         }
-
-        .form-group input:focus {
-            border-color: #1976d2;
+        .upload-btn {
+            text-align: center;
+            margin: 15px 0;
         }
-
-        .btn {
-            width: 100%;
-            padding: 11px;
+        button {
+            padding: 10px 18px;
             background: #1976d2;
             border: none;
             color: #fff;
-            font-size: 14px;
             border-radius: 4px;
             cursor: pointer;
         }
-
-        .btn:hover {
-            background: #155fa0;
+        input[type="file"] {
+            display: none;
         }
-
-        .notice {
-            margin-top: 25px;
-            padding: 12px 14px;
-            background: #f7f9fb;
-            border-left: 3px solid #1976d2;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #444;
-        }
-
-        .footer {
+        .actions {
             text-align: center;
-            margin-top: 40px;
-            font-size: 12px;
-            color: #999;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    ptb-lab · 查询系统
-</div>
+<div class="container">
+    <div class="header">
+        <h2>用户中心</h2>
 
-<div class="panel">
-    <div class="panel-body">
-        <h3>编号查询</h3>
+        <!-- 头像 -->
+        <img src="yuer.jpg" id="avatarPreview" class="avatar">
 
-        <form method="get" action="search.php" onsubmit="return check()">
-            <div class="form-group">
-                <label>查询编号（仅支持数字）</label>
-                <input type="text" name="id" id="id" autocomplete="off">
-            </div>
-
-            <button class="btn" type="submit">提交查询</button>
-        </form>
-
-        <div class="notice">
-            系统当前仅支持<strong>数字类型</strong>的编号查询。<br>
-            请根据系统规则完成一次有效的查询请求。
+        <div class="upload-btn">
+            <button type="button" onclick="selectAvatar()">更换头像</button>
         </div>
     </div>
-</div>
 
-<div class="footer">
-    ptb-lab
+    <!-- iframe：防刷新 -->
+    <iframe name="hidden_iframe" style="display:none;"></iframe>
+
+    <form
+            method="post"
+            action="upload.php"
+            target="hidden_iframe"
+            onsubmit="return checkAvatar()"
+    >
+        <!-- 真实选择文件，仅用于前端 -->
+        <input type="file" id="avatar" onchange="previewAvatar(this)">
+
+        <!-- ❗ 只把“文件名”提交给后端 -->
+        <input type="hidden" name="avatar_name" id="avatar_name">
+
+        <div class="field">
+            <label>用户名</label>
+            <input type="text" value="ptb_user">
+        </div>
+
+        <div class="field">
+            <label>邮箱</label>
+            <input type="email" value="user@ptb-lab.com">
+        </div>
+
+        <div class="field">
+            <label>手机号</label>
+            <input type="text" value="138****8888">
+        </div>
+
+        <div class="field">
+            <label>地址</label>
+            <input type="text" value="Beijing · China">
+        </div>
+
+        <div class="actions">
+            <button type="submit">保存修改</button>
+        </div>
+    </form>
+
+    <div>
+        🎯 <strong>任务说明：</strong><br>
+        本页面模拟了一个普通的用户资料修改功能。<br><br>
+        请设法让系统接受一个<strong>本不应被允许的文件格式</strong>，
+        此类文件在实际环境中往往具有<strong>安全风险</strong>。
+    </div>
+
+
 </div>
 
 <script>
-function check() {
-    var id = document.getElementById("id").value;
-
-    if (!/^[0-9]+$/.test(id)) {
-        alert("参数格式错误");
-        return false;
+    function selectAvatar() {
+        document.getElementById('avatar').click();
     }
-    return true;
-}
+
+    // 本地预览（当次生效）
+    function previewAvatar(input) {
+        if (input.files && input.files[0]) {
+            document.getElementById('avatarPreview').src =
+                URL.createObjectURL(input.files[0]);
+
+            // ❗ 只记录文件名
+            document.getElementById('avatar_name').value =
+                input.files[0].name;
+        }
+    }
+
+    // ❌ 漏洞点：仅前端校验
+    function checkAvatar() {
+        var name = document.getElementById('avatar_name').value;
+
+        if (!name) {
+            alert('请选择头像文件');
+            return false;
+        }
+
+        if (!name.toLowerCase().endsWith('.jpg')) {
+            alert('只允许上传 JPG 格式头像');
+            return false;
+        }
+        return true;
+    }
 </script>
 
 </body>
